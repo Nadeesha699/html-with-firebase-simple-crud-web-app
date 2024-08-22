@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../crudSimple/css/index.css" />
+    <title>CRUD SIMPLE</title>
+  </head>
+  <body>
+    <div id="enterDetails">
+      <h1>Enter deails</h1>
+      <input placeholder="id" id="enterID" type="text" />
+      <input placeholder="name" id="enterName" type="text" />
+      <input placeholder="age" id="enterAge" type="number" />
+      <div>
+        <button id="insert">insert</button>
+        <button id="update">update</button>
+        <button id="remove">remove</button>
+      </div>
+    </div>
+    <div id="findDetails">
+      <h1>Find by ID</h1>
+      <input placeholder="id" id="findID" />
+      <button id="find">find</button>
+      <h3 id="findName" type="text"> </h3>
+      <h3 id="findAge" type="text"> </h3>
+    </div>
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBgPn1-42TC7k78_-0XxZzLhCefdcM_3Mc",
+        authDomain: "crud-simple-4254d.firebaseapp.com",
+        databaseURL:
+          "https://crud-simple-4254d-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "crud-simple-4254d",
+        storageBucket: "crud-simple-4254d.appspot.com",
+        messagingSenderId: "842960728440",
+        appId: "1:842960728440:web:f3ea33016bb810ce67188d",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+
+      import {
+        getDatabase,
+        set,
+        get,
+        update,
+        remove,
+        ref,
+        child,
+      } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+      const db = getDatabase();
+
+      var enterID = document.querySelector("#enterID");
+      var enterName = document.querySelector("#enterName");
+      var enterAge = document.querySelector("#enterAge");
+      var findID = document.querySelector("#findID");
+      var findName = document.querySelector("#findName");
+      var findAge = document.querySelector("#findAge");
+
+      var insertBtn = document.querySelector("#insert");
+      var updateBtn = document.querySelector("#update");
+      var removeBtn = document.querySelector("#remove");
+      var findBtn = document.querySelector("#find");
+
+      insertBtn.addEventListener("click", () => {
+        set(ref(db, "People/" + enterID.value), {
+          Name: enterName.value,
+          ID: enterID.value,
+          Age: enterAge.value,
+        })
+          .then(() => {
+            alert("data added");
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      });
+
+      updateBtn.addEventListener("click", () => {
+        update(ref(db, "People/" + enterID.value), {
+          Name: enterName.value,
+          Age: enterAge.value,
+        })
+          .then(() => {
+            alert("update success");
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      });
+
+      removeBtn.addEventListener("click", () => {
+        remove(ref(db, "People/" + enterID.value))
+          .then(() => {
+            alert("deleted");
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      });
+
+      findBtn.addEventListener("click", () => {
+        const dbref = ref(db);
+        get(child(dbref, "People/" + findID.value))
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              findName.innerHTML = "Name: " + snapshot.val().Name;
+              findAge.innerHTML = "Age: " + snapshot.val().Age;
+            } else {
+              alert("no data found");
+            }
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      });
+    </script>
+  </body>
+</html>
